@@ -7,9 +7,29 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <StackPanel Margin="10">
-            <Button Content="Select Image" HorizontalAlignment="Center" Click="ButtonBase_OnClick"/>
-            <Image x:Name="selectedImage" Margin="0, 10, 0, 0" Stretch="None"/>
-        </StackPanel>
+        <Grid.ColumnDefinitions >
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel Margin="10">
+            <Border CornerRadius="10" BorderBrush="Black" Background="LightGray" BorderThickness="2" DockPanel.Dock="Top">
+                <StackPanel>
+                    <Button Content="Select Image" HorizontalAlignment="Center" Click="ButtonBase_OnClick" />
+                    <Image x:Name="selectedImage" Margin="0, 10, 0, 0" Stretch="None"/>
+                </StackPanel>
+            </Border>
+        </DockPanel>
+        <DockPanel Margin="10" Grid.Column="1" Width="218">
+            <Border CornerRadius="10" BorderBrush="Black" Background="LightSlateGray" BorderThickness="2" DockPanel.Dock="Top">
+            <ListView x:Name="predictionsListView" FontSize="16"  Width="200" VerticalAlignment="top" Margin="0, 0, 0, 0">
+            <ListView.View >
+                <GridView>
+                    <GridViewColumn Header="tag" Width="100" DisplayMemberBinding="{Binding tagName}"/>
+                    <GridViewColumn Header="probability" Width="100" DisplayMemberBinding="{Binding Path=probability, StringFormat=P2}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+                </Border>
+            </DockPanel>
     </Grid>
 </Window>

@@ -77,6 +77,7 @@ namespace LandmarkAi
                             .ReadAsStringAsync(); //dostajemy response w formacie JSON i teraz trzeba g orozkodow3ać 
 
                     List<Prediction> predictions = JsonConvert.DeserializeObject<CustomVision>(responseString).predictions; //wkorzystujemy obsługę JSON z newtonsoft.json i tworzym listę z predykcjami, które są wartościami clasy CutomVison, deserializujemy obiekt JSON podając typ jego klasy, którą wczesniej utworzyliśmy i podając string jako argument
+                    predictionsListView.ItemsSource = predictions;
                 }
             }
 

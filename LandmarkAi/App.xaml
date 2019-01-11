@@ -4,6 +4,26 @@
              xmlns:local="clr-namespace:LandmarkAi"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
-    </Application.Resources>
+        <LinearGradientBrush x:Key="GrayBlueGradientBrush"   
+                             StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="Black" Offset="0" />
+            <GradientStop Color="DarkRed" Offset="0.5" />
+            <GradientStop Color="Black" Offset="1" />
+        </LinearGradientBrush>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="{StaticResource GrayBlueGradientBrush}" />
+            <Setter Property="Width" Value="auto" />
+            <Setter Property="FontSize" Value="22" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Padding" Value="8" />
+            <Setter Property="BorderThickness" Value="5" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="Foreground" Value="White" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Red"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+</Application.Resources>
 </Application>
