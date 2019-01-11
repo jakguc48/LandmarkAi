@@ -15,7 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using LandmarkAi.classes;
 using Microsoft.Win32;
+using Newtonsoft.Json;
 
 namespace LandmarkAi
 {
@@ -32,7 +34,8 @@ namespace LandmarkAi
         private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
         {
             OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Image files (*.png; *.jpg)|*.png;*.jpg*.jpeg|All files(*.*)|*.*";//jeśli chcemy zaznaczyć jakie typy moga być wybrane w dialogu. Image files (*.png; *.jpg) - to jest tylko tekst natomiast filtr dizała po |
+            dialog.Filter =
+                "Image files (*.png; *.jpg)|*.png;*.jpg*.jpeg|All files(*.*)|*.*"; //jeśli chcemy zaznaczyć jakie typy moga być wybrane w dialogu. Image files (*.png; *.jpg) - to jest tylko tekst natomiast filtr dizała po |
             dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
             if (dialog.ShowDialog() == true)
@@ -44,26 +47,40 @@ namespace LandmarkAi
             }
         }
 
-        private async void MakePredictionAsync(string fileName) //metode tworzymy jako asynchroniczną ponieważ czekamy na odpowiedź z serwera api
+        private async void
+            MakePredictionAsync(
+                string fileName) //metode tworzymy jako asynchroniczną ponieważ czekamy na odpowiedź z serwera api
         {
-            string url = "https://southcentralus.api.cognitive.microsoft.com/customvision/v2.0/Prediction/cf674491-55b9-43ba-a3ab-bbd093447351/image?iterationId=20d6d309-0efb-484b-a528-7cf6176677e2"; //wartrość skopiowana ze strony
+            string url =
+                "https://southcentralus.api.cognitive.microsoft.com/customvision/v2.0/Prediction/cf674491-55b9-43ba-a3ab-bbd093447351/image?iterationId=20d6d309-0efb-484b-a528-7cf6176677e2"; //wartrość skopiowana ze strony
             string predictionKey = "2806aad94a054b46bdebed90e3672afd"; //wartość skopiowana ze strony 
-            string contentType = "application/octet-stream";//wartość skopiowana ze strony 
+            string contentType = "application/octet-stream"; //wartość skopiowana ze strony 
             var file = File.ReadAllBytes(fileName); //przekazujemy plika jako tablice bajtów - typowe. 
 
             using (HttpClient client = new HttpClient()) //wykorzystujemy httpclient do nawiązania połączenia z api
             {
-                client.DefaultRequestHeaders.Add("Prediction-Key", predictionKey); //dodajemy customowy header zgodnie z tym co mamy napisane na stronie api
+                client.DefaultRequestHeaders.Add("Prediction-Key",
+                    predictionKey); //dodajemy customowy header zgodnie z tym co mamy napisane na stronie api
 
 
                 using (var content = new ByteArrayContent(file)) //tworzymy nowy plik na podstawie zdjęcia
                 {
-                    content.Headers.ContentType = new MediaTypeHeaderValue(contentType); //przypisujemy zapisany już header - ten istnieje, nie musimy go dodawać jak poprzedniego
-                    var response = await client.PostAsync(url, content); // otrzymujemy tutaj odpowiedź z serwera i czekamy na niego awaitem przekazując wymagane dane.
+                    content.Headers.ContentType =
+                        new MediaTypeHeaderValue(
+                            contentType); //przypisujemy zapisany już header - ten istnieje, nie musimy go dodawać jak poprzedniego
+                    var response =
+                        await client.PostAsync(url,
+                            content); // otrzymujemy tutaj odpowiedź z serwera i czekamy na niego awaitem przekazując wymagane dane.
+
+                    var responseString =
+                        await response.Content
+                            .ReadAsStringAsync(); //dostajemy response w formacie JSON i teraz trzeba g orozkodow3ać 
+
+                    List<Prediction> predictions = JsonConvert.DeserializeObject<CustomVision>(responseString).predictions; //wkorzystujemy obsługę JSON z newtonsoft.json i tworzym listę z predykcjami, które są wartościami clasy CutomVison, deserializujemy obiekt JSON podając typ jego klasy, którą wczesniej utworzyliśmy i podając string jako argument
                 }
             }
 
-            
+
         }
     }
 }
